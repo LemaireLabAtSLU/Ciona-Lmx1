@@ -21,17 +21,17 @@ library(viridisLite)
 library("viridis")
 library(circlize)
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT"
+wd1 <- "/YourDirectory"
 
 setwd(wd1)
 
 inf <- sessionInfo()
 
-write(capture.output(inf),file = "26.01.26_sessionInfo")
+write(capture.output(inf),file = "sessionInfo")
 
 wd2 <- "/scratch/gpfs/LEVINE/llemaire/CellRanger"
 wd3 <- "outs/filtered_feature_bc_matrix/"    ### use filtered matrices (empty droplets are removed) 
-object <- "26.01.26_iGmT1.RData"
+object <- "iGmT1.RData"
 
 ids1 <- c("IG_rep1","IG_rep2",
           "MG_rep1", "MG_rep2",
@@ -190,7 +190,7 @@ rm(qc_thresholds)
 rm(th)
 rm(samplename)
 
-object  <- "26.01.26_iGmT2.RData"
+object  <- "iGmT2.RData"
 save.image(object)
 
 
