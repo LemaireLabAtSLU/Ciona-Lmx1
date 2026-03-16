@@ -47,7 +47,7 @@ save.image(object)
 
 
 #annotate markers
-human.homo <- read.csv("/scratch/gpfs/LEVINE/llemaire/cionaGeneModel/HT.KY21Gene.2.gff3/23.11.01CionaHomolog/gene-homolog2.csv", header = TRUE, row.names = 1)
+human.homo <- read.csv("/YourDirectory/cionaGeneModel/gene-homolog2.csv", header = TRUE, row.names = 1)
 
 human.homo <- as.data.table(human.homo)
 
