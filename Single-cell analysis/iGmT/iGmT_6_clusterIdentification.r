@@ -23,58 +23,16 @@ library(viridisLite)
 library("viridis")
 library(circlize)
 
-#############################################################################SLURM start
-# Identify cluster types (in v5 no more difference between integrated and RNA assay slot)
-
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT"
+wd1 <- "/YourDirectory"
 setwd(wd1)
-object <- "26.01.27_iGmT4.RData"
+object <- "iGmT5.RData"
 load(object)
-
-print("Environment Loaded")
-
-object <-"	26.01.27_iGmT5.RData"
-
-Idents(iGmT) <- "seurat_clusters"
-
-iGmT.markers <- FindAllMarkers(iGmT, only.pos = TRUE,
-                               min.pct = 0.5,
-                               logfc.threshold = 0.5,
-                               test.use = "roc",
-                               slot = "data")
-
-print("Markers Found")
-save.image(object)
-
-
-#annotate markers
-human.homo <- read.csv("/scratch/gpfs/LEVINE/llemaire/cionaGeneModel/HT.KY21Gene.2.gff3/23.11.01CionaHomolog/gene-homolog2.csv", header = TRUE, row.names = 1)
-
-human.homo <- as.data.table(human.homo)
-
-human.homo <- human.homo %>% mutate(human.homolog=coalesce(human.homolog,gene))
-
-iGmT.markers <- tidyft::left_join(iGmT.markers,human.homo,
-                                  by = "gene")
-write.table(iGmT.markers, file="DEG_combined_res1.txt",
-            quote=F, sep="\t", col.names=NA)
-
-save.image(object)
-print("Done")
-
-
-#############################################################################SLURM End
-
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT"
-setwd(wd1)
-object <- "26.01.27_iGmT5.RData"
-load(object)
-object <- "26.01.27_iGmT6.RData"
+object <- "iGmT6.RData"
 
 
 ## KH tissue annotation (Cao et al, Nature, 2019)
 
-KHclusterID <- read_delim("/scratch/gpfs/LEVINE/llemaire/4d/cellID_KH2012/ciona10stage.cluster.upload.new.txt")
+KHclusterID <- read_delim("/YourDirectory/cellID_KH2012/ciona10stage.cluster.upload.new.txt")
 KHclusterID[c("orig.ID","cell.name")] <- str_split_fixed(KHclusterID$NAME, "_", 2)
 
 KHsample<- data.frame(table(KHclusterID$orig.ID))
@@ -502,7 +460,7 @@ FeaturePlot(iGmT, features = c("KY21:KY21.Chr11.637", #tubb4b - NS
 
 #assign tissue types
 
-tissue.type1 <- read.csv("26.02.03.tissue.types.csv",header=TRUE)
+tissue.type1 <- read.csv("iGmT.tissue.types.csv",header=TRUE)
 tissue.type1 <- subset(tissue.type1, select = c("cluster","tissue.type.1","cell.type.1"))
 
 metadata <- iGmT@meta.data
