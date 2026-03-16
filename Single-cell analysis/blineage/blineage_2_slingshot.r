@@ -33,17 +33,16 @@ library(tradeSeq)
 library(clusterExperiment)
 library("DelayedMatrixStats")
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT/26.02.03_NS/26.02.08_blineage/26.02.10_subset npbb"
+wd1 <- "/YourDirectory"
 setwd(wd1)
-write(capture.output(sessionInfo()),file = "26.02.10sessionInfo.txt")
 
-object <- "26.02.10blineage_2.RData"
+object <- "blineage_2.RData"
 
 npbb <- readRDS( file = "blineage2.rds")
 
 
 
-################################################3##Slingshot: trajectory inference
+##################################################Slingshot: trajectory inference
 col1b <- c("#35608D", "#66CC33", "#E31A1C")
 col3 <- c("lightgrey", "#330066")
 nb.cols <- 14
@@ -217,7 +216,7 @@ lines(SlingshotDataSet(cur3_UMAP), type = 'curves', lwd=2, col='black')
 #### Does not work since mTB cells used as start.
 
 
-#Use UMAP instead of PCA (However not recommended)
+#Use UMAP instead of PCA 
 
 #npbb_snn_res.0.9 to have a proper start cluster
 set.seed(1)
@@ -314,9 +313,6 @@ dev.off()
 save.image(object)
 
 
-################## Stop here on 26.02.10
-
-
 ## Transfer lin1 pseudotime (PCA with start cluster4) to seurat object
 pt1.df <- as.data.frame(pt1)
 head(pt1.df)
@@ -355,5 +351,3 @@ DimPlot(npbb, reduction = "npbb2.umap", group.by = "Lineage3.umap", label = FALS
   scale_color_viridis(discrete = TRUE, option="plasma", guide = "colourbar")
 
 save.image(object)
-
-##### Done script on 26.02.11
