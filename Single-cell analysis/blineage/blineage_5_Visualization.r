@@ -31,14 +31,13 @@ library(tradeSeq)
 library(clusterExperiment)
 library("DelayedMatrixStats")
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT/26.02.03_NS/26.02.08_blineage/26.02.10_subset_npbb"
+wd1 <- "/YourDirectory"
 setwd(wd1)
 
-#write(capture.output(sessionInfo()),file = "26.02.12sessionInfo.txt")
 
-object <- "26.02.10blineage_4b.RData" #(Cluster gene expression pattern wit 40 PCAs)
+object <- "blineage_4.RData" #(Cluster gene expression pattern with 40 PCAs)
 load(object)
-object <- "26.02.10blineage_5.RData"
+object <- "blineage_5.RData"
 
 
 clusterLabels3 <- primaryCluster(clusPat3$rsec) #Correspond to mergeClusters, first column of clusterMatrix
@@ -53,7 +52,7 @@ clusterLabels3 <- rownames_to_column(clusterLabels3)
 colnames(clusterLabels3) [1] <- "gene"
 clusterLabels3 <- tidyft::left_join(clusterLabels3,human.homo,
                                     by = "gene")
-write.table(clusterLabels3, file="clusterLabels_lineage3.txt",
+write.table(clusterLabels3, file="blineage_clusterLabels_lineage3.txt",
             quote=F, sep="\t", col.names=NA)
 
 viridis(8, option = "viridis")
@@ -137,19 +136,18 @@ write.table(metrics_pt_lineage3, file="metrics_pt_lineage3.txt",
 
 save.image(object)
 
-###### Stop here in script 26.02.12 
 ##Gene expression cascade of TF
 
 # Find tf
 
-tf <- read.csv("/scratch/gpfs/LEVINE/llemaire/cionaGeneModel/TF_KY21.csv", stringsAsFactors=FALSE, fileEncoding="latin1")
+tf <- read.csv("/YourDirectory/cionaGeneModel/TF_KY21.csv", stringsAsFactors=FALSE, fileEncoding="latin1")
 
 head(tf)
 
 tf1 <- subset(tf, select = c("Gene.Name_KY", "Meaning_KY", "KY.gene.model"))
 
 
-ZFtf <- read.csv("/scratch/gpfs/LEVINE/llemaire/cionaGeneModel/ZF-TF_KY21.csv",  
+ZFtf <- read.csv("/YourDirectory/cionaGeneModel/ZF-TF_KY21.csv",  
                  stringsAsFactors=FALSE, fileEncoding="latin1",
                  header = TRUE)
 
@@ -489,7 +487,7 @@ Lineage3Data.2  <- ggplot_build(Lineage3Data.1)
 
 head(Lineage3Data.2$data[[1]])
 
-pdf(file = "26.02.19 Umap_lineage3_trajectory.pdf", width = 6, 
+pdf(file = "Umap_lineage3_trajectory.pdf", width = 6, 
     height = 6)
 par(pty = "s") #plot area will be square
 plot(x = Lineage3Data.2[["data"]][[1]][["x"]], 
@@ -528,7 +526,7 @@ FeaturePlot(npbb, reduction = "npbb2.umap", features = "Lineage3.umap")+coord_fi
         plot.title = element_text(hjust = 0.5),
         aspect.ratio=1/1)+
   labs( title = "Lineage 3 Pseudotime")
-ggsave("26.02.20 npbb_Umap_lineage3_pseudotime-trajectories.pdf", device= "pdf", width = 20, 
+ggsave("npbb_Umap_lineage3_pseudotime-trajectories.pdf", device= "pdf", width = 20, 
        height = 20, units = "cm")
 
 
@@ -542,7 +540,7 @@ FeaturePlot(npbb, reduction = "npbb2.umap", features = "Lineage1.umap")+coord_fi
         plot.title = element_text(hjust = 0.5),
         aspect.ratio=1/1)+
   labs( title = "Lineage 1 Pseudotime")
-ggsave("26.02.20 npbb_Umap_lineage1_pseudotime-trajectories.pdf", device= "pdf", width = 20, 
+ggsave("npbb_Umap_lineage1_pseudotime-trajectories.pdf", device= "pdf", width = 20, 
        height = 20, units = "cm")
 
 FeaturePlot(npbb, reduction = "npbb2.umap", features = "Lineage2.umap")+coord_fixed()+
@@ -555,7 +553,7 @@ FeaturePlot(npbb, reduction = "npbb2.umap", features = "Lineage2.umap")+coord_fi
         plot.title = element_text(hjust = 0.5),
         aspect.ratio=1/1)+
   labs( title = "Lineage 2 Pseudotime")
-ggsave("26.02.20 npbb_Umap_lineage2_pseudotime-trajectories.pdf", device= "pdf", width = 20, 
+ggsave("npbb_Umap_lineage2_pseudotime-trajectories.pdf", device= "pdf", width = 20, 
        height = 20, units = "cm")
 
 FeaturePlot(npbb.lin3, reduction = "npbb2.umap", features = "Lineage3.umap")+
@@ -570,59 +568,11 @@ FeaturePlot(npbb.lin3, reduction = "npbb2.umap", features = "Lineage3.umap")+
         plot.title = element_text(hjust = 0.5),
         aspect.ratio=1/1)+
   labs( title = "Lineage 3 Pseudotime")
-ggsave("26.02.20 npbb-lineage3_only_Umap_pseudotime-trajectory.pdf", device= "pdf", width = 20, 
+ggsave("npbb-lineage3_only_Umap_pseudotime-trajectory.pdf", device= "pdf", width = 20, 
        height = 20, units = "cm")
 
 save.image(object)
 
-
-########### Add cell types (Also add in visualization_5 script)
-
-npbb$seurat_clusters <- npbb$npbb2.RNA_snn_res.0.9
-
-Idents(npbb) <- "seurat_clusters"
-
-
-
-DimPlot(npbb, reduction = "npbb2.umap", 
-        cols = alpha(col4, 0.5),
-        pt.size = 0.5)+
-  coord_fixed()
-
-
-
-
-clusters <- c(1,2,3,4,5,6)
-cell.type.5 <- c("anterior b-neural tube cells",
-                 "posterior b-neural tube cells",
-                 "rubber cells",
-                 "precusor cells",
-                 "rubber cells",
-                 "anterior b-neural tube cells")
-
-cell.type.5 <- data.frame(clusters, cell.type.5)
-
-metadata<- npbb@meta.data
-
-
-colnames(cell.type.5)[1] <- "seurat_clusters"
-
-cell.type.5$seurat_clusters <- factor(cell.type.5$seurat_clusters)
-class(cell.type.5$seurat_clusters)
-
-md4 <- subset(metadata,select = "seurat_clusters")
-head(md4)
-md4 <- rownames_to_column(md4)
-
-md4 <- left_join(md4, cell.type.5, by = "seurat_clusters")
-md4 <- column_to_rownames(md4)
-
-npbb <- AddMetaData(npbb, md4)
-
-DimPlot(npbb, reduction = "npbb2.umap", group.by = "cell.type.5",
-        cols = alpha(col4, 0.5),
-        pt.size = 0.5)+
-  coord_fixed()
 
 
 save.image(object)
