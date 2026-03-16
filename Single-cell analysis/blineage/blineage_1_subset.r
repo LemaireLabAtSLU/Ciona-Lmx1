@@ -512,7 +512,7 @@ min.cutoff = "q05", max.cutoff = "q95")+coord_fixed()
 ggsave("npbb.UMAP_uxs1.pdf", device= "pdf", width = 24, 
        height = 16, units = "cm") 
 
-save.image("26.02.10blineage_npbb.RData")
+save.image("blineage_withEpidermis.RData")
 
 ####### Remove epithelial cells
 
