@@ -22,18 +22,16 @@ library(viridisLite)
 library("viridis")
 library(circlize)
 
+###### This script is run via slurm
 
 
-
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT"
+wd1 <- "/YourDirectory"
 setwd(wd1)
-object <- "26.01.26_iGmT2.RData"
+object <- "iGmT2.RData"
 load(object)
 print("Environment Loaded")
 
-object <- "26.01.27_iGmT3.RData" ###Should be after load object, wrote over by load over
-inf <- sessionInfo()
-write(capture.output(inf),file = "26.01.27_sessionInfo_script3.txt")
+object <- "iGmT3.RData" 
 
 # split the dataset into a list of layer within the same object
 
