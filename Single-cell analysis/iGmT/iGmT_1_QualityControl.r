@@ -27,9 +27,9 @@ setwd(wd1)
 
 inf <- sessionInfo()
 
-write(capture.output(inf),file = "sessionInfo")
+write(capture.output(inf),file = "iGmT_sessionInfo.txt")
 
-wd2 <- "/scratch/gpfs/LEVINE/llemaire/CellRanger"
+wd2 <- "/YourDirectory/CellRanger"
 wd3 <- "outs/filtered_feature_bc_matrix/"    ### use filtered matrices (empty droplets are removed) 
 object <- "iGmT1.RData"
 
@@ -168,12 +168,6 @@ ggsave("gene-RNA-filtered.content.pdf", device= "pdf", width = 100,
        height = 20, units = "cm")
 
 head(Idents(iGmT))
-
-
-
-
-
-
 
 samplename = iGmT@meta.data$orig.ident
 filteredCell<- as.data.frame(table(samplename))
