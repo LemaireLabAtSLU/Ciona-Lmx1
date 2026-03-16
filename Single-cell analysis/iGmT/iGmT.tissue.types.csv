@@ -1,0 +1,21 @@
+cluster,tissue.type.1,cell.type.1,marker
+8,Endoderm,Endoderm.1,Sod1
+13,Endoderm,Endoderm.2,Sod1
+1,Epidermis,Posterior Epidermis.1,Uxs1 Cdx
+2,Epidermis,Anterior Dorsal Epidermis.1,Tff1 Admp Eya
+3,Epidermis,Posterior Epidermis.2,Uxs1 Tff Cdx
+6,Epidermis,Midline Epidermis,Msx Klf Tff
+7,Epidermis,Anterior Ventral Epidermis,Aqp8 Tff
+16,Epidermis,Anterior Dorsal Epidermis.2,Tff Uxs1 Eya
+19,Germline,Germ cells,
+11,Mesenchyme,Mesenchyme.1,Twist
+14,Mesenchyme,Mesenchyme.2,Twist
+15,Mesenchyme,Mesenchyme.3,Twist
+17,Mesenchyme,Mesenchyme.4,Twist
+12,Muscle and Heart Lineage,Muscle cells and TVCs,
+4,Nervous System,A lineage Nervous System,Flvcr2 Etr
+9,Nervous System,a lineage Nervous System.1,Otx Etr
+10,Nervous System,a lineage Nervous System.2,Otx Etr Piwi Bco1
+18,Nervous System,b lineage Nervous System,
+20,Nervous System,Rubber cells,Hox12 Wnt5 Wnt5Tun
+5,Notochord,Notochord,Brachyury
