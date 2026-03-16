@@ -473,7 +473,7 @@ FeaturePlot(npbb, reduction = "npbb2.umap", features = "Lineage3.umap")+
         plot.title = element_text(hjust = 0.5),
         aspect.ratio=1/1)+
   labs( title = "Pseudotime")
-ggsave("26.02.19 npbb_Umap_lineage3_pseudotime.pdf", device= "pdf", width = 14, 
+ggsave("npbb_Umap_lineage3_pseudotime.pdf", device= "pdf", width = 14, 
        height = 10, units = "cm")
 dev.off()
 
