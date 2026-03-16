@@ -33,54 +33,13 @@ library(tradeSeq)
 library(clusterExperiment)
 library("DelayedMatrixStats")
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT/26.02.03_NS/26.02.08_blineage/26.02.10_subset_npbb"
+wd1 <- "/YourDirectory"
 setwd(wd1)
-write(capture.output(sessionInfo()),file = "26.02.10sessionInfo.txt")
+write(capture.output(sessionInfo()),file = "blineage_sessionInfo.txt")
 
-object <- "26.02.10blineage.RData"
+object <- "blineage.RData"
 
 npbb <- readRDS( file = "blineage.rds") 
-
-human.homo <- read.csv("/scratch/gpfs/LEVINE/llemaire/cionaGeneModel/HT.KY21Gene.2.gff3/23.11.01CionaHomolog/gene-homolog2.csv", header = TRUE, row.names = 1)
-human.homo <- as.data.table(human.homo)
-human.homo <- human.homo %>% mutate(human.homolog=coalesce(human.homolog,gene))
-
-tf <- read.csv("/scratch/gpfs/LEVINE/llemaire/cionaGeneModel/TF_KY21.csv", stringsAsFactors=FALSE, fileEncoding="latin1")
-
-head(tf)
-
-
-
-tf1 <- subset(tf, select = c("Gene.Name_KY", "Meaning_KY", "KY.gene.model"))
-
-
-ZFtf <- read.csv("/scratch/gpfs/LEVINE/llemaire/cionaGeneModel/ZF-TF_KY21.csv",  
-                 stringsAsFactors=FALSE, fileEncoding="latin1",
-                  header = TRUE)
-
-head(ZFtf)
-
-ZFtf1 <- subset(ZFtf, select = c("Gene.Name", "Meaning_KY", "KY.gene.model"))
-colnames(ZFtf1) [1] <- "Gene.Name_KY"
-
-ZFtf2 <- subset(ZFtf1, ZFtf1$KY.gene.model %in% tf1$KY.gene.model)
-
-ZFtf3 <- dplyr::anti_join(ZFtf1, ZFtf2, by = "KY.gene.model")
-
-B<-c(1, 2, 251, 253, 254, 255, 256, 257)
-
-ZFtf4<-ZFtf3[B,]
-
-
-ZFtf4$KY21 <- paste("KY21:", ZFtf4$KY.gene.model, sep = "")
-tf1$KY21 <- paste("KY21:", tf1$KY.gene.model, sep = "")
-
-tf1 <- rbind(tf1, ZFtf4)
-
-tf.name <- tf1$KY21
-tf.name <- na.omit(tf.name)
-
-rm(tf1, ZFtf1, ZFtf2, ZFtf3, ZFtf4)
 
 DimPlot(npbb, reduction = "NS.umap", group.by = "seurat_clusters")
 
@@ -144,12 +103,6 @@ npbb[["RNA"]] <- split(npbb[["RNA"]], f = npbb$orig.ident)
 npbb <- FindVariableFeatures(npbb, selection.method = "vst", nfeatures = 4000)
 
 save.image(object)
-#This meanpbb that signals separating non-cycling cells and cycling cells will be maintained, 
-#but differences in cell cycle phase among proliferating cells (which are often uninteresting), 
-#will be regressed out of the data
-
-######Not done, since most of the cells are still cycling
-#npbb$CC.Difference <- npbb$S.Score - npbb$G2M.Score
 
 npbb <- ScaleData(npbb, vars.to.regress = c("S.Score", "G2M.Score"), features = VariableFeatures(npbb))
 
@@ -173,34 +126,21 @@ ggsave("npbb.Unintegrated.UMAP.pdf", device= "pdf", width = 24,
 
 
 #Perform integration ####### Decrease the number of k.wieght since only 36 cells in datasets
-
-npbb <- IntegrateLayers(object = npbb, method = CCAIntegration, orig.reduction = "npbb.pca",
-                        new.reduction = "npbb.integrated.cca", k.weight = 35, #dims = 1:30 ,k.anchor = NA,  , k.filter = NA,
-                      verbose = TRUE)
-
-
-# We can also specify parameters such as `k.anchor` to increase the strength of integration
+# We can also specify parameters such as `k.anchor` to adjust the strength of integration
 
 npbb.2 <- IntegrateLayers(object = npbb, method = CCAIntegration, orig.reduction = "npbb.pca",
                         new.reduction = "npbb.integrated.cca.2", k.weight = 35, k.anchor = 10, #dims = 1:30 , , k.filter = NA,
                         verbose = TRUE)
 
 
-###### dims = 1:30 (default)
-## Error in FindIntegrationAnchors(object.list = object.list, anchor.features = features,  : 
-##Max dimension too large: objects 10 contain fewer than 10 cells. 
-##Please specify a maximum dimensions that is less than the number of cells in any object (10).
-##### k.weight = 100
+##### k.weight = 100 (default)
 ## k.weight (100) is set larger than the number of cells 
 ## in the smallest object (36). Please choose a smaller k.weight. 
-#### 
-## Issue with datasets smaller than 30 cells
-## https://github.com/satijalab/seurat/issues/4803
-## Suggestion: Maybe you can merge the small objects into the bigger one.
+#### k.anchor = 5 (default)
+## K.anchor  = 10
+
 
 # re-join layers after integration
-
-npbb[["RNA"]] <- JoinLayers(npbb[["RNA"]])
 
 npbb.2[["RNA"]] <- JoinLayers(npbb.2[["RNA"]])
 npbb.2
@@ -223,14 +163,13 @@ DimPlot(npbb.2, reduction ="npbb.pca", split.by="orig.ident", ncol = 3)
 n.dims <- 12 ###Number of dimension for downstream analysis
 
 
-npbb.default.integration <- npbb
 npbb <- npbb.2
 
 rm(npbb.2)
 
 
 
-################################ K.anchor  = 10
+
 npbb <- FindNeighbors(npbb, reduction = "npbb.integrated.cca.2", dims = 1:n.dims,
                     graph.name = c("npbb.RNA_nn","npbb.RNA_snn"))
 
@@ -318,19 +257,6 @@ DimPlot(npbb, reduction ="npbb.tsne", group.by=c("npbb.RNA_snn_res.0.3",
                                                  "npbb.RNA_snn_res.0.9"))
 
 
-########################### if default k.anchor
-
-npbb <- RunUMAP(npbb, reduction = "npbb.integrated.cca",
-                dims = 1:n.dims, reduction.name = "npbb.default.umap",
-                reduction.key = "npbbDefaultumap_")
-
-DimPlot(npbb, reduction ="npbb.default.umap", group.by=c("stage",
-                                                 "Phase"))
-ggsave("npbb.default.umap.stage.phase.pdf", device= "pdf", width = 40, 
-       height = 20, units = "cm")
-
-###################################
-
 
 #### Select res 0.5 as resolution
 
@@ -339,7 +265,7 @@ Idents(npbb) <- "npbb.RNA_snn_res.0.5"
 npbb$seurat_clusters <- npbb$npbb.RNA_snn_res.0.5
 
 
-#### Check marker and find if should remove cluster 5
+#### Check marker and find it should remove cluster 5
 
 npbb.markers <- FindAllMarkers(npbb, only.pos = TRUE,
                              min.pct = 0.5,
@@ -647,12 +573,6 @@ npbb.2[["RNA"]] <- split(npbb.2[["RNA"]], f = npbb.2$orig.ident)
 npbb.2 <- FindVariableFeatures(npbb.2, selection.method = "vst", nfeatures = 4000)
 
 save.image(object)
-#This meanpbb that signals separating non-cycling cells and cycling cells will be maintained, 
-#but differences in cell cycle phase among proliferating cells (which are often uninteresting), 
-#will be regressed out of the data
-
-######Not done, since most of the cells are still cycling
-#npbb$CC.Difference <- npbb$S.Score - npbb$G2M.Score
 
 npbb.2 <- ScaleData(npbb.2, vars.to.regress = c("S.Score", "G2M.Score"), features = VariableFeatures(npbb.2))
 
@@ -667,11 +587,8 @@ ggsave("npbb2_PCA.pdf", device= "pdf", width = 20,
 save.image(object)
 #Check unintegrated data
 
-#Perform integration ####### Decrease the number of k.wieght since only 36 cells in datasets
+#Perform integration ####### Decrease the number of k.weight since only 36 cells in datasets
 
-npbb.2b <- IntegrateLayers(object = npbb.2, method = CCAIntegration, orig.reduction = "npbb2.pca",
-                        new.reduction = "npbb2.integrated.cca", k.weight = 34, #dims = 1:30 ,,  , k.filter = NA,
-                        k.anchor = 10, verbose = TRUE)
 
 npbb.2c <- IntegrateLayers(object = npbb.2, method = CCAIntegration, orig.reduction = "npbb2.pca",
                            new.reduction = "npbb2.integrated.cca", k.weight = 34, #dims = 1:30 ,,  , k.filter = NA,
@@ -681,10 +598,10 @@ npbb.2d <- IntegrateLayers(object = npbb.2, method = RPCAIntegration, orig.reduc
                            new.reduction = "npbb2.integrated.cca", k.weight = 30, #dims = 1:30 ,,  , k.filter = NA,
                            k.anchor = 3, verbose = TRUE)
 
-# We can also specify parameters such as `k.anchor` to increase/decrease the strength of integration, default is k.anchor = 5
+############ We can also specify parameters such as `k.anchor` to increase/decrease the strength of integration, default is k.anchor = 5
 #Try 3 but still a mass of cells
 #Try 10, blops
-##############Try with RPCA and low k.anchor, it works separate the different cell types.
+############## Intergration with RPCA and low k.anchor, it separates the different cell types.
 
 
 ###### dims = 1:30 (default)
@@ -728,12 +645,9 @@ DimHeatmap(npbb.2d, dims = 1:12, cells = 200, balanced = TRUE, reduction = "npbb
 DimPlot(npbb.2d, reduction ="npbb2.pca", split.by="orig.ident", ncol = 3)
 n.dims <- 10 ###Number of dimension for downstream analysis
 
-#npbb.2b <- RunTSNE(npbb.2b, reduction = "npbb2.integrated.cca", dims = 1:n.dims,
-#                  reduction.name = "npbb2.tsne", reduction.key = "npbb2tsne_") 
 
-npbb.2b <- RunUMAP(npbb.2b, reduction = "npbb2.integrated.cca",
-                  dims = 1:n.dims, reduction.name = "npbb2.umap",
-                  reduction.key = "npbb2umap_")
+
+
 
 npbb.2c <- RunUMAP(npbb.2c, reduction = "npbb2.integrated.cca",
                    dims = 1:n.dims, reduction.name = "npbb2.umap",
