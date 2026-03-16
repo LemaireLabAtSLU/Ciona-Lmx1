@@ -590,45 +590,21 @@ save.image(object)
 #Perform integration ####### Decrease the number of k.weight since only 36 cells in datasets
 
 
-npbb.2c <- IntegrateLayers(object = npbb.2, method = CCAIntegration, orig.reduction = "npbb2.pca",
-                           new.reduction = "npbb2.integrated.cca", k.weight = 34, #dims = 1:30 ,,  , k.filter = NA,
-                           k.anchor = 10, verbose = TRUE)
-
 npbb.2d <- IntegrateLayers(object = npbb.2, method = RPCAIntegration, orig.reduction = "npbb2.pca",
-                           new.reduction = "npbb2.integrated.cca", k.weight = 30, #dims = 1:30 ,,  , k.filter = NA,
+                           new.reduction = "npbb2.integrated.cca", k.weight = 30, #dims = 1:30 , k.filter = NA,
                            k.anchor = 3, verbose = TRUE)
 
-############ We can also specify parameters such as `k.anchor` to increase/decrease the strength of integration, default is k.anchor = 5
-#Try 3 but still a mass of cells
-#Try 10, blops
+###########
 ############## Intergration with RPCA and low k.anchor, it separates the different cell types.
-
-
-###### dims = 1:30 (default)
-## Error in FindIntegrationAnchors(object.list = object.list, anchor.features = features,  : 
-##Max dimension too large: objects 10 contain fewer than 10 cells. 
-##Please specify a maximum dimensions that is less than the number of cells in any object (10).
-##### k.weight = 100
-## k.weight (100) is set larger than the number of cells 
-## in the smallest object (36). Please choose a smaller k.weight. 
-#### 
-## Issue with datasets smaller than 30 cells
-## https://github.com/satijalab/seurat/issues/4803
-## Suggestion: Maybe you can merge the small objects into the bigger one.
 
 # re-join layers after integration
 
-npbb.2b[["RNA"]] <- JoinLayers(npbb.2b[["RNA"]])
-npbb.2c[["RNA"]] <- JoinLayers(npbb.2c[["RNA"]])
+
 npbb.2d[["RNA"]] <- JoinLayers(npbb.2d[["RNA"]])
 
 #save.image(object)
 
 
-
-
-
-################################
 #Project cells into UMAP 
 
 #Choosing number of PCAs for projection and clustering
@@ -648,15 +624,6 @@ n.dims <- 10 ###Number of dimension for downstream analysis
 
 
 
-
-npbb.2c <- RunUMAP(npbb.2c, reduction = "npbb2.integrated.cca",
-                   dims = 1:n.dims, reduction.name = "npbb2.umap",
-                   reduction.key = "npbb2umap_")
-
-npbb.2d <- RunUMAP(npbb.2d, reduction = "npbb2.integrated.cca",
-                   dims = 1:n.dims, reduction.name = "npbb2.umap",
-                   reduction.key = "npbb2umap_")
-
 DimPlot(npbb.2d, reduction ="npbb2.umap",
         group.by="cell.type.4", cols = col4)+
   coord_fixed()
@@ -670,8 +637,6 @@ DimPlot(npbb.2d, reduction ="npbb2.umap",
   coord_fixed()
 ggsave("npbb2_UMAP_stage.pdf", device= "pdf", width = 20, 
        height = 20, units = "cm")
-
-#npbb.2d looks great, change to npbb.2
 
 npbb.2 <- npbb.2d
 
@@ -750,7 +715,7 @@ ggsave("npbb2_Lmx_Hep-r.a_Msx_Cdx.pdf", device= "pdf", width = 80,
        height = 20, units = "cm")
 
 
-########### Add cell types (Also add in visualization 6 script)
+########### Add cell types 
 
 npbb.2$seurat_clusters <- npbb.2$npbb2.RNA_snn_res.0.9
 DimPlot(npbb.2, reduction = "npbb2.umap", group.by = "seurat_clusters")
@@ -762,7 +727,7 @@ clusters <- c(1,2,3,4,5,6)
 cell.type.5 <- c("anterior b-neural tube cells",
                  "posterior b-neural tube cells",
                   "rubber cells",
-                 "precusor cells",
+                 "precursor cells",
                   "rubber cells",
                  "anterior b-neural tube cells")
 
