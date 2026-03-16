@@ -31,21 +31,21 @@ library(tradeSeq)
 library(clusterExperiment)
 library("DelayedMatrixStats")
 
+#################### Script performed with SLURM
+
 print("library loaded")
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT/26.02.03_NS/26.02.08_blineage/26.02.10_subset_npbb"
+wd1 <- "/YourDirectory"
 setwd(wd1)
 
-write(capture.output(sessionInfo()),file = "26.02.12sessionInfo.txt")
-
-object <- "26.02.10blineage_3.RData"
+object <- "blineage_3.RData"
 load(object)
-object <- "26.02.10blineage_4b.RData"
+object <- "blineage_4.RData"
 
 
 #Clustering of genes according to their expression pattern
 ##Clustering using RSEC, clusterExperiment
-# Tranfer reduce dimension to sce object wit tradeseq
+# Tranfer reduce dimension to sce object with tradeseq
 reducedDims(npbb.sce.2)$PCA <- npbb.sce@int_colData@listData[["reducedDims"]]@listData[["NPBB2.PCA"]]
 
 head(npbb.sce@int_colData@listData[["reducedDims"]]@listData[["NPBB2.PCA"]])
