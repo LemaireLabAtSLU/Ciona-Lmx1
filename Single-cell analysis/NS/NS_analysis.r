@@ -23,13 +23,13 @@ library(viridisLite)
 library("viridis")
 library(circlize)
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT/26.02.03_NS"
+wd1 <- "/YourDirectory"
 setwd(wd1)
 
-write(capture.output(sessionInfo()),file = "26.02.03_sessionInfo.txt")
+write(capture.output(sessionInfo()),file = "NS_sessionInfo.txt")
 
 
-object <- "26.02.03.iGmT.NS.RData"
+object <- "iGmT.NS.RData"
 
 NS <- readRDS( file = "NS.rds")       ### include midline which will give rise to epidermal neurons 
 
@@ -53,11 +53,6 @@ NS[["RNA"]] <- split(NS[["RNA"]], f = NS$orig.ident)
 NS <- FindVariableFeatures(NS, selection.method = "vst", nfeatures = 4000)
 
 save.image(object)
-
-#This means that signals separating non-cycling cells and cycling cells will be maintained, 
-#but differences in cell cycle phase among proliferating cells (which are often uninteresting), 
-#will be regressed out of the data
-#NS$CC.Difference <- NS$S.Score - NS$G2M.Score ######Not done, since most of the cells are still cycling
 
 NS <- ScaleData(NS, vars.to.regress = c("S.Score", "G2M.Score"), features = VariableFeatures(NS))
 
@@ -1172,9 +1167,9 @@ DotPlot(NS, features = c("KY21:KY21.Chr4.720", #Otx
         aspect.ratio=4/15)
 
 
-#### Assign cell type based on clustering 2.4
+#### Assign cell type based on clustering res.2.4
 
-cell.type <- read.csv("26.02.08_NS.cell.types.csv",header=TRUE)
+cell.type <- read.csv("NS.cell.types.csv",header=TRUE)
 metadata<- NS@meta.data
 
 head(metadata)
