@@ -23,14 +23,16 @@ library(viridisLite)
 library("viridis")
 library(circlize)
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT"
+######## This script is run via SLURM
+
+wd1 <- "/YourDirectory"
 setwd(wd1)
-object <- "26.01.27_iGmT4.RData"
+object <- "iGmT4.RData"
 load(object)
 
 print("Environment Loaded")
 
-object <-"26.01.27_iGmT5.RData"
+object <-"iGmT5.RData"
 
 Idents(iGmT) <- "seurat_clusters"
 
@@ -53,7 +55,7 @@ human.homo <- human.homo %>% mutate(human.homolog=coalesce(human.homolog,gene))
 
 iGmT.markers <- tidyft::left_join(iGmT.markers,human.homo,
                                      by = "gene")
-write.table(iGmT.markers, file="DEG_combined_res1.txt",
+write.table(iGmT.markers, file="iGmT_DEG_combined_res1.txt",
             quote=F, sep="\t", col.names=NA)
 
 save.image(object)
