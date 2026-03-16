@@ -22,12 +22,12 @@ library(viridisLite)
 library("viridis")
 library(circlize)
 
-wd1 <- "/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT"
-setwd("/scratch/gpfs/LEVINE/llemaire/singleCellAnalysis/26.01.26_iGmT")
+wd1 <- "/YourDirectory"
+setwd(wd1)
 
 
 load(object)
-object  <- "26.01.26_iGmT2.RData"
+object  <- "iGmT2.RData"
 
 #### Normalized data for cell cycle score
 
