@@ -212,4 +212,69 @@ plotSmoothers(npbb.sce.2, npbb.sce.count, gene = "KY21:KY21.Chr1.1257",
 ggsave("Laminin_pseudotime.lineage3.pdf", device= "pdf", width = 18, 
        height = 10, units = "cm")
 
+col8 <- viridis(12, option = "D")[c(1, 7, 12)]
+
+plot1 <- ggplot(gene, aes(x = x, y = y, color = target))
+
+plot1 + geom_point()+geom_smooth(method = "loess", se = FALSE, span = 1)+
+scale_color_manual(values = alpha(col8,0.8))+
+  scale_y_continuous(limits =c(0,3.2), breaks = seq(from = 0, to = 3, by =0.5) )+
+  theme_classic() +
+  labs( y = "Log\n(expression + 1)" , x= "Pseudotime") + 
+  ggtitle("Single-cell gene expression:\n Laminin, Lmx1, and Wnt7")+
+  scale_x_continuous(limits =c(0,8), breaks = seq(from = 0, to = 8, by =2) )+
+  theme(axis.text.x = element_text(size = 12, angle=0, vjust=0.5, hjust=0.5),
+        axis.text.y = element_text(size = 12),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        axis.ticks = element_line(colour = "black", linewidth = 0.7),
+        axis.ticks.length = unit(.2, "cm"),
+        axis.line = element_line(colour = "black", linewidth = 0.7, linetype = "solid"),
+        aspect.ratio=1/1)
+ggsave("pseudotime_Lmx_Wnt7_Laminin_lineage3.pdf", device= "pdf", width = 10, 
+       height = 10, units = "cm")
+
+plot2 <- ggplot(gene[gene$target == "Lmx1"|gene$target == "Laminin",], aes(x = x, y = y, color = target))
+
+plot2 + geom_point()+geom_smooth(method = "loess", se = FALSE, span = 1)+
+  scale_color_manual(values = alpha(col8[1:2], 0.5))+
+  geom_smooth(method = "loess", se = FALSE, span = 1)+
+  scale_y_continuous(limits =c(0,3.2), breaks = seq(from = 0, to = 3, by =0.5) )+
+  scale_x_continuous(limits =c(0,8), breaks = seq(from = 0, to = 8, by =2) )+
+  theme_classic() +
+  labs( y = "Log\n(expression + 1)" , x= "Pseudotime") + 
+  ggtitle("Single-cell gene expression:\n Laminin and Lmx1")+
+  theme(axis.text.x = element_text(size = 12, angle=0, vjust=0.5, hjust=0.5),
+        axis.text.y = element_text(size = 12),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        axis.ticks = element_line(colour = "black", linewidth = 0.7),
+        axis.ticks.length = unit(.2, "cm"),
+        axis.line = element_line(colour = "black", linewidth = 0.7, linetype = "solid"),
+        aspect.ratio=1/1)
+ggsave("pseudotime_Lmx_Laminin_lineage3.pdf", device= "pdf", width = 10, 
+       height = 10, units = "cm")
+
+plot3 <- ggplot(gene[gene$target == "Lmx1"|gene$target == "Wnt7",], aes(x = x, y = y, color = target))
+
+plot3 + geom_point()+
+  geom_smooth(method = "loess", se = FALSE, span = 1)+
+  scale_color_manual(values = alpha(col8[c(2,1)], 0.5))+
+  geom_smooth(method = "loess", se = FALSE, span = 1)+
+  scale_y_continuous(limits =c(0,2.4), breaks = seq(from = 0, to = 2, by =0.5) )+
+  scale_x_continuous(limits =c(0,8), breaks = seq(from = 0, to = 8, by =2) )+
+  theme_classic() +
+  labs( y = "Log\n(expression + 1)" , x= "Pseudotime") + 
+  ggtitle("Single-cell gene expression:\n Lmx1 and Wnt7")+
+  theme(axis.text.x = element_text(size = 12, angle=0, vjust=0.5, hjust=0.5),
+        axis.text.y = element_text(size = 12),
+        axis.title.y = element_text(size = 14, face = "bold"),
+        plot.title = element_text(hjust = 0.5),
+        axis.ticks = element_line(colour = "black", linewidth = 0.7),
+        axis.ticks.length = unit(.2, "cm"),
+        axis.line = element_line(colour = "black", linewidth = 0.7, linetype = "solid"),
+        aspect.ratio=1/1)
+ggsave("pseudotime_Lmx_Wnt7_lineage3.pdf", device= "pdf", width = 10, 
+       height = 10, units = "cm")
+
 save.image(object)
